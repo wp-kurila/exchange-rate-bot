@@ -8,8 +8,8 @@ const cryptoData = [
 	{
 		url: 'https://www.commex.com/bapi/c2c/v1/friendly/c2c/ad/search',
 		body: {
-			asset: "USDT",
 			fiat: "RUB",
+			asset: "USDT",
 			page: 1,
 			rows: 1,
 			tradeType: "BUY"
@@ -19,10 +19,10 @@ const cryptoData = [
 		url: 'https://p2p.binance.com/bapi/c2c/v2/friendly/c2c/adv/search',
 		body: {
 			"fiat": "THB",
+			"asset": "USDT",
 			"page": 1,
 			"rows": 1,
-			"tradeType": "BUY",
-			"asset": "USDT"
+			"tradeType": "SELL"
 		}
 	}
 ];
