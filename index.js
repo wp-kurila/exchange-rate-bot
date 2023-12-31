@@ -70,6 +70,10 @@ const start = () => {
 
 			return bot.sendMessage(chatId, answer);
 		}
+
+		if (text.search(/бала/i) !== -1) {
+			return bot.sendMessage(chatId, 'Ээ ты чо, бала, рот твой шатал');
+		}
 	
 		return bot.sendMessage(chatId, 'Не надо мне ничего писать, просто выбери команду');
 	});
