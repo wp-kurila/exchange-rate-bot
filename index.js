@@ -69,7 +69,7 @@ const start = () => {
 
 				answer = `Курс обмена Рубль-Бат\n\nБинанс: 1 бат от ${(rubRate / thbRate).toFixed(2)}`;
 			} catch {
-				answer = 'Чёт не то, попробуй позже';
+				answer = 'Чёт не то, попробуй позже1';
 			}
 
 			return bot.sendMessage(chatId, answer);
