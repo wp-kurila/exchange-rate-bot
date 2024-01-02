@@ -36,6 +36,9 @@ const getData = async () => {
 		body: JSON.stringify(item.body)
 	}));
 
+	console.log('requests')
+	console.log(requests)
+
 	const [r1, r2] = await Promise.all(requests);
 
 	return [await r1.json(), await r2.json()];
