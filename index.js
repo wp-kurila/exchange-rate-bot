@@ -60,6 +60,10 @@ const start = () => {
 			try {
 				const results = await getData();
 
+				console.log('result')
+				console.log(results[0].data[0].adDetailResp)
+				console.log(results[1].data[0].adv)
+
 				const rubRate = results[0].data[0].adDetailResp.price;
 				const thbRate = results[1].data[0].adv.price;
 
