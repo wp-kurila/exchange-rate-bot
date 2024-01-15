@@ -27,7 +27,22 @@ const cryptoData = [
 	}
 ];
 
-const getData = async () => {
+const koronaData = {
+	link: 'https://koronapay.com/transfers/online/api/transfers/tariffs?',
+	params: {
+		"sendingCountryId": "RUS",
+		"sendingCurrencyId": "810",
+		"receivingCountryId": "THA",
+		"receivingBankCode": "025",
+		"receivingCurrencyId": "840",
+		"receivingAmount": "10000",
+		"receivingMethod": "accountViaDeeMoney",
+		"paidNotificationEnabled": "false",
+		"paymentMethod": "debitCard"
+	}
+}
+
+const getCryptoData = async () => {
 	const requests = cryptoData.map(item => fetch(item.url, {
 		method: 'POST',
 		headers: {
@@ -41,14 +56,26 @@ const getData = async () => {
 	return [await r1.json(), await r2.json()];
 }
 
+const getKoronaData = async () => {
+	let url = koronaData.link;
+	Object.entries(koronaData.params).forEach(param => url += `${param[0]}=${param[1]}&`);
+
+	const request = await fetch(url);
+	return await request.json();
+}
+
 const start = () => {
 	bot.setMyCommands([
 		{command: '/info', description: 'Получить курс обмена'}
 	]);
 	
 	bot.on('message', async msg => {
+		const isVoice = msg.voice;
 		const text = msg.text;
 		const chatId = msg.chat.id;
+
+		console.log(msg)
+		//msg.from.id === 1345379438
 	
 		if (text === '/start') {
 			return bot.sendMessage(chatId, 'Привет, поц');
@@ -58,20 +85,38 @@ const start = () => {
 			let answer;
 
 			try {
-				const results = await getData();
+				await bot.sendMessage(chatId, 'Щас узнаем');
+				answer = '<b>Курс обмена Рубль-Бат</b>';
 
-				const rubRate = results[0].data[0].adDetailResp.price;
-				const thbRate = results[1].data[0].adv.price;
+				//контент криптобирж
+				const [rubData, thbData] = await getCryptoData();
 
-				answer = `Курс обмена Рубль-Бат\n\nБинанс: 1 бат от ${(rubRate / thbRate).toFixed(2)}`;
+				const rubRateCommext = rubData.data[0].adDetailResp.price;
+				const thbRateBinance = thbData.data[0].adv.price;
+
+				answer += '\n\nКоммекс - Бинанс: ';
+				answer += rubRateCommext && thbRateBinance ? `1 бат от ${(rubRateCommext / thbRateBinance).toFixed(2)}` : 'Данных нет';
+
+				//контент короны
+				const [koronaData] = await getKoronaData();
+
+				const rubAmountKorona = koronaData.exchangeRate * 100;
+				const thbAmountKorona = koronaData.receivingAmountComment.replace(/\D/g, "");
+
+				answer += '\n\nКорона: ';
+				answer += rubAmountKorona && thbAmountKorona ? `1 бат за ${(rubAmountKorona / thbAmountKorona).toFixed(2)}` : 'Данных нет';
 			} catch {
-				answer = 'Чёт не то, попробуй позже1';
+				answer = 'Чёт не то, попробуй позже';
 			}
 
-			return bot.sendMessage(chatId, answer);
+			return bot.sendMessage(chatId, answer, {parse_mode: 'HTML'});
 		}
 
-		if (text.search(/бала/i) !== -1) {
+		if (isVoice) {
+			return bot.sendMessage(chatId, 'Ты че ёбу дал?? Какие ещё голосовухи');
+		}
+
+		if (text && text.toLowerCase().search(/бала/i) !== -1) {
 			return bot.sendMessage(chatId, 'Ээ ты чо, бала, рот твой шатал');
 		}
 	
